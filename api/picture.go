@@ -26,7 +26,7 @@ func CreatePicture(c echo.Context) error {
 // ShowPicture 读取影像
 func ShowPicture(c echo.Context) error {
 	var res serializer.Response
-	service := service.ShowPictureService{}
+	var service service.ShowPictureService
 	if user := CurrentUser(c); user != nil {
 		res = service.Show(c.Param("id"), user.ID)
 	} else {
@@ -55,7 +55,7 @@ func UpdatePicture(c echo.Context) error {
 // DeletePicture 删除影像
 func DeletePicture(c echo.Context) error{
 	if user := CurrentUser(c); user != nil {
-		service := service.DeletePictureService{}
+		var service service.DeletePictureService
 		res := service.Delete(c.Param("id"), user.ID)
 		return c.JSON(200, res)
 	}
@@ -67,7 +67,7 @@ func DeletePicture(c echo.Context) error{
 
 // ListPicture 影像列表
 func ListPicture(c echo.Context) error {
-	service := service.ListPictureService{}
+	var service service.ListPictureService
 	if user := CurrentUser(c); user != nil {
 		if err := c.Bind(&service); err == nil {
 			res := service.List(user.ID)
@@ -88,6 +88,7 @@ func ListPicture(c echo.Context) error {
 // LikePicture 影像点赞
 func LikePicture(c echo.Context) error {
 	if user := CurrentUser(c); user != nil {
+		var service service.LikePictureService
 		res := service.Like(c.Param("id"), user.ID)
 		return c.JSON(200, res)
 	}

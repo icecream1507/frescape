@@ -24,12 +24,8 @@ func CurrentUser(c echo.Context) *model.User {
 func UserRegister(c echo.Context) error {
 	var service service.UserRegisterService
 	if err := c.Bind(&service); err == nil {
-		if user, err := service.Register(); err != nil {
-			return c.JSON(200, err)
-		} else {
-			res := serializer.BuildUserResponse(user)
-			return c.JSON(200, res)
-		}
+		res := service.Register()
+		return c.JSON(200, res)
 	} else {
 		return c.JSON(200, err)
 	}
@@ -46,7 +42,9 @@ func UserLogin(c echo.Context) error {
 			s, _ := session.Get("user", c)
 			s.Values["user_id"] = user.ID
 			s.Save(c.Request(), c.Response())
-			res := serializer.BuildUserResponse(user)
+			res := serializer.Response{
+				Data: user,
+			}
 			return c.JSON(200, res)
 		}
 	} else {
@@ -58,7 +56,9 @@ func UserLogin(c echo.Context) error {
 func UserMe(c echo.Context) error {
 	user := CurrentUser(c)
 	if user != nil{
-		res := serializer.BuildUserResponse(*user)
+		res := serializer.Response{
+			Data: user,
+		}
 		return c.JSON(200, res)
 	} else {
 		res := serializer.Response {
@@ -68,13 +68,3 @@ func UserMe(c echo.Context) error {
 		return c.JSON(200, res)
 	}
 }
-
-/* UserLogout 用户登出
-func UserLogout(c echo.Context) error {
-	s, _ := session.Get("user", c)
-	delete(s.Values, "user_id")
-	s.Save(c.Request(), c.Response())
-	return c.JSON(200, serializer.Response{
-		      Msg:    "登出成功",
-		   })
-}*/

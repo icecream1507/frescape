@@ -8,8 +8,10 @@ import (
 	"strconv"
 )
 
+type LikePictureService struct {}
+
 // Like 点赞影像
-func Like(pictureID string, opreatorID uint) serializer.Response {
+func (service *LikePictureService) Like(pictureID string, opreatorID uint) serializer.Response {
 	var picture model.Picture
 	err := model.DB.First(&picture, pictureID).Error
 	if err != nil {

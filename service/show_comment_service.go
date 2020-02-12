@@ -8,6 +8,7 @@ import (
 
 type ShowCommentService struct {}
 
+// typeProcess 类型转换
 func typeProccess(str string) uint {
 	num, err := strconv.Atoi(str)
 	if err != nil {
@@ -24,8 +25,8 @@ func (service *ShowCommentService) Show(tid string) serializer.Response {
 	// 获取当前主题下的所有根评论
 	if err := model.DB.Where("parent_id = ? and topic_id = ?", 0, typeProccess(tid)).Find(&ParentComments).Error; err != nil {
 		return serializer.Response{
-			Status: 50001,
-			Msg:    "读取数据库失败",
+			Status: 50311,
+			Msg:    "读取评论失败",
 			Error:  err.Error(),
 		}
 	}
@@ -38,8 +39,8 @@ func (service *ShowCommentService) Show(tid string) serializer.Response {
 
 		if err := model.DB.Where("parent_id = ? and topic_id = ?", ParentComment.ID, typeProccess(tid)).Find(&ChildComments).Error; err != nil {
 			return serializer.Response{
-				Status: 50001,
-				Msg:   "数据库读取失败",
+				Status: 50311,
+				Msg:   "读取评论失败",
 				Error: err.Error(),
 			}
 		}
