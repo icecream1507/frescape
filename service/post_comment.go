@@ -7,16 +7,16 @@ import (
 
 // PostCommentService 评论提交的服务
 type PostCommentService struct {
-	TopicID    uint `form:"topic_id" json:"topic_id" binding:"required"`
-	ParentID   uint `form:"parent_id" json:"parent_id"`
-	CreatorID  uint `form:"creatort_id" json:"creator_id" binding:"required"`
+	TopicID    uint `form:"tid" json:"tid" binding:"required"`
+	ParentID   uint `form:"pid" json:"pid"`
+	CreatorID  uint
 	Content    string `form:"content" json:"content" binding:"required"`
 	Permission uint `form:"permission" json:"permission" binding:"required"`
 }
 
 
 // Post 提交评论
-func (service *PostCommentService) Create() serializer.Response {
+func (service *PostCommentService) Post() serializer.Response {
 	comment := model.Comment{
 		TopicID: service.TopicID,
 		ParentID: service.ParentID,
