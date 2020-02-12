@@ -22,7 +22,7 @@ func (service *ShowCommentService) Show(tid string) serializer.Response {
 	var ParentComments []model.Comment
 
 	// 获取当前主题下的所有根评论
-	if err := model.DB.Model(&model.Comment{}).Where("parent_id = ? and topic_id = ?", 0, typeProccess(tid)).Find(&ParentComments).Error; err != nil {
+	if err := model.DB.Where("parent_id = ? and topic_id = ?", 0, typeProccess(tid)).Find(&ParentComments).Error; err != nil {
 		return serializer.Response{
 			Status: 50001,
 			Msg:    "读取数据库失败",
@@ -36,7 +36,7 @@ func (service *ShowCommentService) Show(tid string) serializer.Response {
 		var ChildComments []model.Comment
 		var CommentResponse serializer.Comment
 
-		if err := model.DB.Model(&model.Comment{}).Where("parent_id = ?", ParentComment.ID).Find(&ChildComments).Error; err != nil {
+		if err := model.DB.Where("parent_id = ? and topic_id = ?", ParentComment.ID, typeProccess(tid)).Find(&ChildComments).Error; err != nil {
 			return serializer.Response{
 				Status: 50001,
 				Msg:   "数据库读取失败",
@@ -45,9 +45,7 @@ func (service *ShowCommentService) Show(tid string) serializer.Response {
 		}
 
 		CommentResponse = serializer.BuildComment(ParentComment)
-		CommentResponse = serializer.Comment{
-			Children: ChildComments,
-		}
+		CommentResponse.Children = ChildComments
 		CommentsResponse = append(CommentsResponse, CommentResponse)
 	}
 
